@@ -8,14 +8,14 @@
   <title>単語カード/单词卡</title>
   <style>
     #flashcard {
-      width: 300px;
-      height: 80px;
+      width: 340px;
+      height: 200px;
       border: 1px solid #000;
       text-align: center;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 28px;
+      font-size: 25px;
     }
 
     /* ボタンのスタイルを変更してサイズを大きくする */
@@ -113,6 +113,52 @@
       border-radius: 6px
     }
 
+    .imgDivDisplay {
+      display: block;
+
+    }
+
+    .imgDivNoDisplay {
+      display: none;
+    }
+
+    #inputHanyu {
+      font-size: 18px;
+    }
+
+    #etcInfo {
+      display: flex;
+    }
+
+    #Internet {
+      margin-top: 20px;
+      margin-left: 20px;
+      background-color: skyblue;
+      width: 90px;
+      height: 30px;
+    }
+
+    #infoInternet {
+      text-decoration: none;
+    }
+
+    .internetNoDisplay {
+      display: none;
+    }
+
+    .internetDisplay {
+      display: block;
+    }
+
+    #header3 {
+
+      display: flex;
+    }
+
+    #questionNo {
+      margin-left: 30px;
+    }
+
     .totalGrade {
       padding-left: 30px;
 
@@ -127,9 +173,11 @@
     .totalGradeNoDisplay {
       display: none;
     }
+
     #totalSeitouritsu {
       font-size: 24px;
     }
+
     #totalComment {
       font-size: 24px;
       color: red;
@@ -150,7 +198,10 @@
     }
   </style>
   <!--  スプレッドシートの情報を読み込むために必要 -->
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/css/lightbox.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
 
 </head>
 
@@ -168,19 +219,33 @@
       </div>
       <div class="linkurl">
         <a id="flash"
-          href="https://script.google.com/macros/s/AKfycbwCL3tny-JoGZehVtlIoO5bAdv5MVrEG88dCRBJmFTwp5cPgYwnhXRgssoVwQmY6f0/exec"
+          href="https://script.google.com/macros/s/AKfycbz4oJsJ-w-NmZI_qlEsi_jMeoWUbBfcKWinqAECVhQxJe49tWGij9KNLZjJ7UMSMc8/exec"
           target="_blank">語句・本文・文法</a>
         <!-- <a id="ikeda" href="index6.Chinese" target="_blank">使用手引書</a> -->
 
       </div>
     </div>
-    <!-- シートセレクトボックス -->
-    <div class="sheetSelect">
+    <div id="header3">
+      <!-- シートセレクトボックス -->
+      <div class="sheetSelect">
 
-      <label for="sheet-select">シート選択：</label><select id="sheet-select" name="sheetSelect"></select>
+        <label for="sheet-select">シート選択：</label><select id="sheet-select" name="sheetSelect"></select>
+      </div>
+      <div id="questionNo"></div>
+
     </div>
   </div>
-  <div id="flashcard">Click to see definition/按下键看单词卡</div>
+  <div id="flashcard">Click to see definition/［下一个］（次へ）を押して単語を見る</div>
+  <div id="etcInfo">
+    <div id="imgDiv" class="imgDivNoDisplay">
+      <a id="aGazou" target="_blank"><img id="imgGazou" width="100" height="100"></a>
+
+    </div>
+    <div id="Internet" class="internetNodisplay">
+      <a id="infoInternet">参考サイト</a>
+
+    </div>
+  </div>
   <div class="showCard showCardBlock">
     <button onclick="showPreviousCard()">上一个</button>
     <button onclick="showAnswer()">下一个</button>
@@ -256,6 +321,12 @@
     const showCard = document.querySelector('.showCard');
     let comment = document.getElementById('comment');
     const totalGrade = document.querySelector('.totalGrade');
+    const imgDiv = document.getElementById('imgDiv');
+    const aGazou = document.getElementById('aGazou');
+    const imgGazou = document.getElementById('imgGazou');
+    const questionNo = document.getElementById('questionNo');
+    let Internet = document.getElementById('Internet');
+    // チェックボックスが変更されたとき
     chkbox.addEventListener('change', () => {
       if (chkbox.checked) {
         isPinyin = true;
@@ -264,23 +335,26 @@
         comment.textContent = '';
       } else {
         isPinyin = false;
-        formDisplay.classList.add('formDisplayNone');
-        formDisplay.classList.remove('formDisplayBlock');
-        showCard.classList.add('showCardBlock');
-        showCard.classList.remove('showCardNone');
+        fncFormDisplayNone();
+
+        comment.textContent = '';
       }
       chkboxChenged();
 
     });
+    //
+    function fncFormDisplayNone() {
+      formDisplay.classList.add('formDisplayNone');
+      formDisplay.classList.remove('formDisplayBlock');
+      showCard.classList.add('showCardBlock');
+      showCard.classList.remove('showCardNone');
+    }
     chkInput.addEventListener('click', (e) => {
       e.preventDefault();
       if (isKanjiCheck) {
         isKanjiCheck = false;
         chkInput.textContent = 'チェック';
-        formDisplay.classList.add('formDisplayNone');
-        formDisplay.classList.remove('formDisplayBlock');
-        showCard.classList.add('showCardBlock');
-        showCard.classList.remove('showCardNone');
+        fncFormDisplayNone();
         showAnswer();
         inputHanyu.value = '';
         inputHanyu.focus();
@@ -327,11 +401,15 @@
       currentIndex = -1;
       correctCount = 0;
       incorrectCount = 0;
+      questionNo.textContent = '';
+      fncFormDisplayNone();
+      fncImageNoDisplay();
+      
       displayResult();
-      flashcard.textContent = '按下键看单词卡';
+      flashcard.textContent = '［下一个］（次へ）を押して単語を見る';
       totalGrade.classList.remove('totalGradeDisplay');
       totalGrade.classList.add('totalGradeNoDisplay');
-
+      
     }
     // シートのセレクトボックス　作成処理
     function setSheetNames(sheetNamesArray) {
@@ -350,9 +428,9 @@
       let j = 0;
       let flashcardData2 = [];
       for (let i = 0; i < flashcardData.length; i++) {
-        let gyou = ['jp', flashcardData[i][0] + '.' + flashcardData[i][1]];
+        let gyou = ['jp', flashcardData[i][1], flashcardData[i][4], flashcardData[i][5], flashcardData[i][0]];
         flashcardData2.push(gyou);
-        gyou = ['ch', flashcardData[i][2] + '/' + flashcardData[i][3]];
+        gyou = ['ch', flashcardData[i][2] + '/' + flashcardData[i][3], flashcardData[i][4], flashcardData[i][5], flashcardData[i][0]];
         flashcardData2.push(gyou);
 
       }
@@ -363,9 +441,10 @@
       currentIndex = -1;
       correctCount = 0;
       incorrectCount = 0;
+      questionNo.textContent = '';
       totalGrade.classList.remove('totalGradeDisplay');
       totalGrade.classList.add('totalGradeNoDisplay');
-      flashcard.textContent = '按下键看单词卡';
+      flashcard.textContent = '［下一个］（次へ）を押して単語を見る';
       showCard.classList.add('showCardBlock');
       showCard.classList.remove('showCardNone');
       let result = document.querySelector('.result');
@@ -378,6 +457,14 @@
         result.classList.add('resultNone');
 
       }
+      fncImageNoDisplay();
+      
+    }
+    function fncImageNoDisplay() {
+      imgDiv.classList.add('imgDivNoDisplay');
+      imgDiv.classList.remove('imgDivDisplay');
+      Internet.classList.remove('internetDisplay');
+      Internet.classList.add('internetNoDisplay');
 
     }
 
@@ -399,7 +486,7 @@
           if (correctCount === mondaisu) {
 
             totalComment.textContent = '恭喜恭喜!!';
-            
+
             speakText2('恭喜恭喜!!');
           } else {
             totalComment.textContent = '';
@@ -418,6 +505,11 @@
       const currentData = flashcardData2[currentIndex];
       console.log(`currentdata= ${currentData}`);
       flashcard.textContent = currentData[1];
+      fncGazouInternet(currentData);
+
+      let strQuestionNo = `${currentData[4]}/${flashcardData2.length / 2}`;
+      questionNo.textContent = strQuestionNo;
+
       termSave = currentData[0];
       // termがChineseの時に中国だから　Chineseの時だけspeakTextを呼び出す。
       if (currentData[0] === 'ch') {
@@ -436,7 +528,39 @@
       }
 
     }
-    
+    function fncGazouInternet(currentData) {
+      if (currentData[2] !== '') {
+        imgDiv.classList.add('imgDivDisplay');
+        imgDiv.classList.remove('imgDivNoDisplay');
+        aGazou.setAttribute('href', currentData[2]);
+        imgGazou.setAttribute('src', currentData[2]);
+
+      } else {
+        imgDiv.classList.remove('imgDivDisplay');
+        imgDiv.classList.add('imgDivNoDisplay');
+
+        aGazou.setAttribute('href', '');
+        imgGazou.setAttribute('src', '');
+
+
+      }
+
+      if (currentData[3] !== '') {
+        Internet.classList.add('internetDisplay');
+        Internet.classList.remove('internetNoDisplay');
+        let infoInternet = document.getElementById('infoInternet');
+
+        let gazouURL0 = currentData[3];
+        infoInternet.setAttribute('href', gazouURL0);
+        // atag.setAttribute('class', 'classGazou');
+        infoInternet.setAttribute('target', '_blank');
+
+      } else {
+        Internet.classList.remove('internetDisplay');
+        Internet.classList.add('internetNoDisplay');
+
+      }
+    }
     // 前のカードを表示する関数
     function showPreviousCard() {
       currentIndex = currentIndex - 1;
@@ -444,7 +568,10 @@
         currentIndex = 0;
       }
       const currentData = flashcardData2[currentIndex];
+      fncGazouInternet(currentData);
       flashcard.textContent = currentData[1];
+      let strQuestionNo = `${currentData[4]}/${flashcardData2.length / 2}`;
+      questionNo.textContent = strQuestionNo;
       termSave = currentData[0];
       // termがChineseの時に中国だから　Chineseの時だけspeakTextを呼び出す。
       if (currentData[0] === 'ch') {
@@ -489,7 +616,7 @@
 
 
     // 最初のカードを表示
-    flashcard.textContent = '按下键看单词卡';
+    flashcard.textContent = '［下一个］（次へ）を押して単語を見る';
     // フラッシュカードがクリックされた時の処理
     flashcard.addEventListener('click', () => {
       if (termSave === 'ch') {
