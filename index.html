@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>充実初級単語カード</title>
+  <title>リアルタッチ中国語単語カード</title>
   <style>
     .header {
       position: fixed;
@@ -289,8 +289,10 @@
       </div>
       <div class="linkurl">
         <a id="flash"
-        href="https://script.google.com/macros/s/AKfycbwCL3tny-JoGZehVtlIoO5bAdv5MVrEG88dCRBJmFTwp5cPgYwnhXRgssoVwQmY6f0/exec"
+        href="https://script.google.com/macros/s/AKfycbz4oJsJ-w-NmZI_qlEsi_jMeoWUbBfcKWinqAECVhQxJe49tWGij9KNLZjJ7UMSMc8/exec"
         target="_blank">本文</a>
+
+
 
         <!-- <a id="ikeda" href="index6.Chinese" target="_blank">使用手引書</a> -->
         <a id="ikeda" href="https://drive.google.com/file/d/1xExBsjozNSCnDzwf80Gl3rN_VejIsiju/view?usp=sharing" target="_blank">Help</a>
@@ -355,7 +357,7 @@
 
   <script>
     // スプレッドシート　単語カード3　gas webアプリ　URL  単語カード3
-    const END_POINT = "https://script.google.com/macros/s/AKfycbyxQF6ra_N6kJ1bGfaQV9j87f53-ESW_ovbUjoPuiONzAHKRZ2ApIhiBG7RhJub4FgN/exec";
+    const END_POINT = "https://script.google.com/macros/s/AKfycby6dbFTGjNiPVyPTaPHEzptay-V5k9UtPwo7Ax3wNgnHp5j9KfnEN-B_90XO8dDAX0N/exec";
 
 
     // スプレッドシート　単語カードを読み込んで配列　flashcardDataにセット
@@ -371,7 +373,6 @@
     let textChinese;  // 　ピンイン削除後の中国語を記憶
     let tdOLD;
     let tdOLDColor;  
-
 
     const flashcard = document.getElementById('flashcard');
     // const button = document.querySelector('button');
@@ -690,7 +691,7 @@
     }
     // テキストを音声に変換して再生する関数
     function speakText2(text) {
-      
+     
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'zh-CN'; // 中国語の言語コード
       synth.speak(utterance);
