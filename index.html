@@ -388,7 +388,13 @@
     // スプレッドシート　単語カード3　gas webアプリ　URL  単語カード3
     const END_POINT = "https://script.google.com/macros/s/AKfycby6dbFTGjNiPVyPTaPHEzptay-V5k9UtPwo7Ax3wNgnHp5j9KfnEN-B_90XO8dDAX0N/exec";
 
-
+    // ios 中国語音声不具合の訂正
+    // 2023/04/27
+    let voices = [];
+    // 初期音声リストの取得
+    voices = speechSynthesis.getVoices();
+    // 音声リストが取得できない場合は、音声リストが取得できるようになるまで待機
+    // 2023/04/27
     // スプレッドシート　単語カードを読み込んで配列　flashcardDataにセット
     let flashcardDatas;  // 全シートのflashdata
     let flashcardData;   // フラッシュカード新形式
@@ -717,6 +723,17 @@
       console.log(`split後= ${textChinese}`);
       const utterance = new SpeechSynthesisUtterance(textChinese);
       utterance.lang = 'zh-CN'; // 中国語の言語コード
+      // ios 中国語音声不具合の訂正
+      // 利用可能な音声を確認
+      const voices = speechSynthesis.getVoices();
+      const chineseVoice = getChineseVoice();
+
+      if (chineseVoice) {
+        utterance.voice = chineseVoice;
+      } else {
+        console.warn('Chinese voice not found, using default voice.');
+      }
+      // ios 中国語音声不具合の訂正
       synth.speak(utterance);
     }
     // テキストを音声に変換して再生する関数
@@ -724,6 +741,17 @@
      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'zh-CN'; // 中国語の言語コード
+      // ios 中国語音声不具合の訂正
+      // 利用可能な音声を確認
+      const voices = speechSynthesis.getVoices();
+      const chineseVoice = getChineseVoice();
+
+      if (chineseVoice) {
+        utterance.voice = chineseVoice;
+      } else {
+        console.warn('Chinese voice not found, using default voice.');
+      }
+      // ios 中国語音声不具合の訂正
       synth.speak(utterance);
     }
     // テキストを音声に変換して再生する関数
@@ -742,8 +770,32 @@
 
       const utterance = new SpeechSynthesisUtterance(td.textContent);
       utterance.lang = 'zh-CN'; // 中国語の言語コード
+      // ios 中国語音声不具合の訂正
+      // 利用可能な音声を確認
+      const voices = speechSynthesis.getVoices();
+      const chineseVoice = getChineseVoice();
+
+      if (chineseVoice) {
+        utterance.voice = chineseVoice;
+      } else {
+        console.warn('Chinese voice not found, using default voice.');
+      }
+      // ios 中国語音声不具合の訂正
       synth.speak(utterance);
     }
+    // ios 中国語音声不具合の訂正 2024-12-09
+    function getChineseVoice() {
+      if (voices.length === 0) {
+        voices = speechSynthesis.getVoices();
+      }
+      return voices.find(voice => voice.lang === 'zh-CN');
+    }
+
+    // 音声リストが更新されたときに再取得
+    speechSynthesis.onvoiceschanged = function () {
+      voices = speechSynthesis.getVoices();
+    };
+    // ios 中国語音声不具合の訂正 2024-12-09
     // 正解不正解の判断
     function checkAnswer(isCorrect) {
       // ここに正解不正解の処理を追加する
